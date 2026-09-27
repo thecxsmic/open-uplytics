@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: uplytics
+      POSTGRES_PASSWORD: uplytics
+      POSTGRES_DB: uplytics
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uplytics -d uplytics"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - uplytics-pg:/var/lib/postgresql/data
+
+volumes:
+  uplytics-pg:
