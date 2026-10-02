@@ -1,4 +1,5 @@
 import { texecute, tquery, row } from "@/lib/db";
+import { ensureDemoFresh } from "@/lib/demo";
 import { aggregateEvents } from "@/lib/aggregate";
 import { hourBucketUtc, threeMonthsAgoMs } from "@/lib/utils";
 
@@ -124,5 +125,13 @@ export async function runHourlyTransfer() {
     [Date.now() - 2 * 24 * 3600 * 1000],
   );
 
-  return { transferred, buckets: buckets.length };
+  let demo = { seeded: false };
+  try {
+    demo = await ensureDemoFresh();
+  } catch (err) {
+    console.error("[demo] seed", err);
+    demo = { seeded: false, error: err.message };
+  }
+
+  return { transferred, buckets: buckets.length, demo };
 }

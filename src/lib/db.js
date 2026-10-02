@@ -28,6 +28,24 @@ export async function texecute(sql, args = []) {
   return { rowsAffected: result.rowCount, rows: result.rows };
 }
 
+export async function tbatch(statements) {
+  const client = await getPool().connect();
+  try {
+    await client.query("BEGIN");
+    for (const statement of statements) {
+      const sql = typeof statement === "string" ? statement : statement.sql;
+      const args = typeof statement === "string" ? [] : statement.args || [];
+      await client.query(toPg(sql), args);
+    }
+    await client.query("COMMIT");
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
 export function row(rows) {
   return rows[0] || null;
 }

@@ -56,7 +56,7 @@ npm run dev
 
 Open http://localhost:3000. You land on sign-in. The first account gets a workspace. Add a site, paste the script from its settings, and open that site. The first accepted visit marks it verified and starts uptime checks. http://localhost:3000/demo is the sample dashboard, with no account.
 
-`/demo` is sample traffic. It is read-only until you create your own site.
+`/demo` is sample traffic. It is read-only until you create your own site. Opening it fills any missing sample hours, and the hourly rollup does the same. `npm run db:demo` rebuilds the sample from scratch.
 
 The script tag looks like this. `APP_URL` is the origin of the app you just started.
 

@@ -1,4 +1,5 @@
-import { tquery, row } from "@/lib/db";
+import { tbatch, tquery, row } from "@/lib/db";
+import { ensureDemoData } from "@/lib/demo-seed";
 import {
   DEMO_OWNER_ID,
   DEMO_SITE_IDS,
@@ -67,7 +68,25 @@ export async function assertNotDemoSite(siteId) {
   if (await siteIsDemo(siteId)) throw readOnlyError();
 }
 
+const seedDb = { query: tquery, batch: tbatch };
+
+export async function ensureDemoFresh() {
+  const pending = globalThis.__uplDemoSeed;
+  if (pending) return pending;
+  const job = ensureDemoData(seedDb)
+    .catch((err) => {
+      console.error("[demo] seed", err);
+      return { seeded: false, error: err.message };
+    })
+    .finally(() => {
+      globalThis.__uplDemoSeed = null;
+    });
+  globalThis.__uplDemoSeed = job;
+  return job;
+}
+
 export async function getDemoPayload() {
+  await ensureDemoFresh();
   const workspace = await getDemoWorkspace();
   if (!workspace) return null;
   const sites = await tquery(
@@ -79,6 +98,7 @@ export async function getDemoPayload() {
 }
 
 export async function ensureDemoSite(siteId) {
+  await ensureDemoFresh();
   const workspace = await getDemoWorkspace();
   if (!workspace) {
     const err = new Error("Demo workspace is not seeded");

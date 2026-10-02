@@ -5,7 +5,7 @@ Three jobs keep the data current:
 | Job | When | What it does |
 |---|---|---|
 | Health checks | Every 10 minutes | Requests every uptime URL on verified sites. Mail goes out only when a URL changes between up and down. |
-| Hourly rollup | Once each UTC hour | Copies finished hour buckets into `hourly_stats`, then clears those buckets. Also drops live pings older than 10 minutes, finished downtime older than 3 months, hourly stats older than 400 days, and processed buckets older than 2 days. |
+| Hourly rollup | Once each UTC hour | Copies finished hour buckets into `hourly_stats`, then clears those buckets. Also drops live pings older than 10 minutes, finished downtime older than 3 months, hourly stats older than 400 days, and processed buckets older than 2 days. Tops up the sample dashboard when its hours are behind. |
 | Daily purge | 03:15 UTC | Deletes finished downtime older than 3 months and activity-log rows older than 180 days. |
 
 Page views still show on the dashboard before the hourly job runs. That job is what keeps the long-range charts after the raw bucket is cleared.

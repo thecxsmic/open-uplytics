@@ -65,7 +65,7 @@ function mergeMaps(a, b) {
 export function mergeAggregates(existing, incoming) {
   return {
     pageviews: (existing.pageviews || 0) + incoming.pageviews,
-    visitors: Math.max(existing.visitors || 0, incoming.visitors || 0) + 0,
+    visitors: (existing.visitors || 0) + (incoming.visitors || 0),
     pages: mergeMaps(existing.pages, incoming.pages),
     referrers: mergeMaps(existing.referrers, incoming.referrers),
     devices: mergeMaps(existing.devices, incoming.devices),
