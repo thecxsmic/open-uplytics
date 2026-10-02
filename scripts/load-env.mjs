@@ -45,8 +45,19 @@ export const OPTIONAL_ENV = [
   "ALLOWED_DOMAINS_BYPASS",
 ];
 
+const PLACEHOLDER_ENV = {
+  CRON_SECRET: "replace-with-cron-secret",
+};
+
+export function envGap(key) {
+  const value = String(process.env[key] || "").trim();
+  if (!value || value === PLACEHOLDER_ENV[key]) return "is not there";
+  if (key === "AUTH_SECRET" && value.length < 16) return "is shorter than 16 characters";
+  return "";
+}
+
 export function missingRequiredEnv() {
-  return REQUIRED_ENV.filter((key) => !String(process.env[key] || "").trim());
+  return REQUIRED_ENV.filter((key) => envGap(key) === "is not there");
 }
 
 export function baseUrl() {

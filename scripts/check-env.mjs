@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { loadProjectEnv, missingRequiredEnv, OPTIONAL_ENV, REQUIRED_ENV, baseUrl } from "./load-env.mjs";
+import { loadProjectEnv, missingRequiredEnv, OPTIONAL_ENV, REQUIRED_ENV, baseUrl, envGap } from "./load-env.mjs";
 import { createDb } from "./pg.mjs";
 
 loadProjectEnv();
@@ -19,9 +19,8 @@ function fail(msg) {
 console.log("Open Uplitycs env check\n");
 console.log("Required:");
 for (const key of REQUIRED_ENV) {
-  const val = String(process.env[key] || "").trim();
-  if (!val) fail(`${key} is missing`);
-  else if (key === "AUTH_SECRET" && val.length < 16) fail(`${key} must be at least 16 characters`);
+  const gap = envGap(key);
+  if (gap) fail(`${key} ${gap}`);
   else ok(`${key} is set`);
 }
 
